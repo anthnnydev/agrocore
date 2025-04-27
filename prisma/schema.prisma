@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Cliente
+model Cliente {
+  id          String   @id @default(cuid())
+  nombre      String
+  ciudad      String?
+  notas       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ventas      Venta[]
+}
+
+// Proveedor
+model Proveedor {
+  id            String         @id @default(cuid())
+  nombre        String
+  contacto      String?
+  telefono      String?
+  email         String?
+  direccion     String?
+  ciudad        String?
+  notas         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relaciones
+  tipoId        String?
+  tipo          TipoProveedor? @relation(fields: [tipoId], references: [id])
+  
+  lotes         Lote[]
+  gastos        Gasto[]
+}
+
+model TipoProveedor {
+  id        String       @id @default(cuid())
+  nombre    String       @unique
+  proveedores Proveedor[]
+}
+
+// Lote (Camada de pollos)
+model Lote {
+  id                String   @id @default(cuid())
+  numeroLote        String   @unique
+  fechaIngreso      DateTime
+  cantidadInicial   Int      
+  precioUnitario    Float 
+  proveedorId       String?
+  proveedor         Proveedor? @relation(fields: [proveedorId], references: [id])
+  estado            String  // "Activo", "Finalizado"
+  fechaFinalizacion DateTime?
+  notas             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relaciones
+  gastos            Gasto[]
+  ventas            Venta[]
+  registrosMortalidad Mortalidad[]
+}
+
+// Mortalidad
+model Mortalidad {
+  id          String   @id @default(cuid())
+  loteId      String
+  lote        Lote     @relation(fields: [loteId], references: [id])
+  fecha       DateTime
+  cantidad    Int
+  causa       String?
+  notas       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Gastos
+model Gasto {
+  id          String   @id @default(cuid())
+  loteId      String
+  lote        Lote     @relation(fields: [loteId], references: [id])
+  proveedorId String?
+  proveedor   Proveedor? @relation(fields: [proveedorId], references: [id])
+  fecha       DateTime
+  concepto    String
+  monto       Float
+  categoria   String   // "Alimento", "Medicamentos", "Mantenimiento", etc.
+  notas       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Ventas
+model Venta {
+  id          String   @id @default(cuid())
+  loteId      String
+  lote        Lote     @relation(fields: [loteId], references: [id])
+  clienteId   String
+  cliente     Cliente  @relation(fields: [clienteId], references: [id])
+  fecha       DateTime
+  cantidad    Int
+  precioUnitario Float
+  total       Float
+  estado      String   // "Pagado", "Pendiente", "Cancelado"
+  numeroFactura String?
+  notas       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
