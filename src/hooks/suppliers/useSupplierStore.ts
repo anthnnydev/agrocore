@@ -21,7 +21,7 @@ export const useSupplierQuery = () => {
   const { setSuppliers } = useSupplierStore();
 
   return useQuery({
-    queryKey: ["clients"],
+    queryKey: ["suppliers"],
     queryFn: fetchSuppliers,
     meta: {
       onSuccess: (data: SupplierWithLoteGastoCount[]) => {

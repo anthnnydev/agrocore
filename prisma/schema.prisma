@@ -43,6 +43,8 @@ model TipoProveedor {
   id        String       @id @default(cuid())
   nombre    String       @unique
   proveedores Proveedor[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 // Lote (Camada de pollos)
