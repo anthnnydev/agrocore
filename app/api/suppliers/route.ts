@@ -8,6 +8,7 @@ export async function GET() {
   try {
     const suppliers = await prisma.proveedor.findMany({
       include: {
+        tipo: true,
         _count: {
           select: {
             gastos: true,

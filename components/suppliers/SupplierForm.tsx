@@ -9,6 +9,7 @@ export default function SupplierForm({
   isSubmitting = false,
   onSubmit,
   onCancel,
+  tiposProveedor,
 }: SupplierFormDataProps) {
   const {
     register,
@@ -99,6 +100,11 @@ export default function SupplierForm({
                 } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors`}
               >
                 <option value="">Seleccione un tipo</option>
+                {(tiposProveedor || []).map((tipo) => (
+                  <option key={tipo.id} value={tipo.id}>
+                    {tipo.nombre}
+                  </option>
+                ))}
               </select>
               {errors.tipoId && (
                 <p className="mt-2 text-sm text-red-600 font-medium">

@@ -1,10 +1,11 @@
-import { Proveedor, Prisma } from "@prisma/client";
+import { Proveedor, Prisma, TipoProveedor } from "@prisma/client";
 
-export type SupplierWithLoteGastoCount  = Prisma.ProveedorGetPayload<{
+export type SupplierWithLoteGastoCount = Prisma.ProveedorGetPayload<{
   include: {
+    tipo: true,
     _count: {
       select: {
-        lotes: true
+        lotes: true,
         gastos: true
       };
     };
@@ -30,6 +31,7 @@ export interface SupplierListProps {
 
 export interface SupplierFormDataProps {
   supplier?: Proveedor;
+  tiposProveedor: TipoProveedor[];
   isSubmitting?: boolean;
   onSubmit: (data: SupplierFormData) => void;
   onCancel: () => void;

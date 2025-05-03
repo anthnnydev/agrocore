@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Validar datos con Zod
     const validatedData = createTipoProveedorSchema.parse(body);
 
-    const newSupplierType = await prisma.proveedor.create({
+    const newSupplierType = await prisma.tipoProveedor.create({
       data: {
         nombre: validatedData.nombre
       },

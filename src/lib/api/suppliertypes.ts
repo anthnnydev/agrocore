@@ -23,7 +23,7 @@ export const fetchSuppliersType = async (): Promise<
   SupplierTypeWithSupplier[]
 > => {
   try {
-    const response = await fetch("/api/suppliers-types");
+    const response = await fetch("/api/supplier-types");
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -39,7 +39,7 @@ export const fetchSuppliersType = async (): Promise<
 // Obtener un tipo proveedor por ID
 export const fetchSupplierTypeById = async (id: string) => {
   try {
-    const response = await fetch(`/api/suppliers-types/${id}`);
+    const response = await fetch(`/api/supplier-types/${id}`);
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -57,7 +57,7 @@ export const createSupplierType = async (data: SupplierTypeFormData) => {
   try {
     const validatedData = createTipoProveedorSchema.parse(data);
 
-    const response = await fetch("/api/suppliers-types", {
+    const response = await fetch("/api/supplier-types", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export const updateSupplierType = async ({
   try {
     const validatedData = updateTipoProveedorSchema.parse({ id, ...data });
 
-    const response = await fetch(`/api/suppliers-types/${id}`, {
+    const response = await fetch(`/api/supplier-types/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -109,7 +109,7 @@ export const deleteSupplierType = async (id: string) => {
   try {
     const validatedData = deleteTipoProveedorSchema.parse({ id });
 
-    const response = await fetch(`/api/suppliers-types/${id}`, {
+    const response = await fetch(`/api/supplier-types/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -21,14 +21,14 @@ export interface SupplierTypeListProps {
 }
 
 export interface SupplierTypeFormDataProps {
-  supplier?: TipoProveedor;
+  suppliertype?: TipoProveedor;
   isSubmitting?: boolean;
   onSubmit: (data: SupplierTypeFormData) => void;
   onCancel: () => void;
 }
 
 export interface DeleteSupplierModalProps {
-  supplier: SupplierTypeWithSupplier | null;
+  suppliertype: SupplierTypeWithSupplier | null;
   isOpen: boolean;
   isDeleting: boolean;
   onClose: () => void;

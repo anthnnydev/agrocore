@@ -1,24 +1,9 @@
-// components/suppliers/SupplierList.tsx
-import { TipoProveedor, Prisma } from "@prisma/client";
 import { BuildingStorefrontIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { SupplierTypeListProps } from "@/src/types/suppliertype.type";
 import Link from "next/link";
 import dayjs from "dayjs";
 
-type SupplierTypeWithSupplier = Prisma.TipoProveedorGetPayload<{
-  include: {
-    _count: {
-      select: {
-        proveedores: true;
-      };
-    };
-  };
-}>;
-
-type Props = {
-  typesuppliers: SupplierTypeWithSupplier[];
-};
-
-export default function TypeSupplierList({ typesuppliers }: Props) {
+export default function TypeSupplierList({ suppliertype, onEdit, onDelete }: SupplierTypeListProps) {
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="p-5 border-b">
@@ -36,7 +21,7 @@ export default function TypeSupplierList({ typesuppliers }: Props) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {typesuppliers.map((typesupplier) => (
+            {suppliertype.map((typesupplier) => (
               <tr key={typesupplier.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -52,14 +37,22 @@ export default function TypeSupplierList({ typesuppliers }: Props) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {dayjs(typesupplier.createdAt).format("D MMM, YYYY")}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Link href={`/settings/supplier-types/${typesupplier.id}/edit`} className="text-indigo-600 hover:text-indigo-900 mr-4">
-                    <PencilIcon className="h-5 w-5 inline" />
-                  </Link>
-                  <button className="text-red-600 hover:text-red-900">
-                    <TrashIcon className="h-5 w-5 inline" />
-                  </button>
-                </td>
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => onEdit(typesupplier)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          <PencilIcon className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                        <button
+                          onClick={() => onDelete(typesupplier)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <TrashIcon className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                      </div>
+                    </td>
               </tr>
             ))}
           </tbody>
