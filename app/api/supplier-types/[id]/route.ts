@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateProveedorSchema, deleteProveedorSchema } from "@/src/schemas/supplier.schema";
+import { updateTipoProveedorSchema, deleteTipoProveedorSchema } from "@/src/schemas/suppliertype.schema";
 import { prisma } from "@/src/lib/prisma";
 import { ZodError } from "zod";
 
-// GET: Obtener un proveedor por ID
+// GET: Obtener un tipo proveedor por ID
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -11,36 +11,35 @@ export async function GET(
   try {
     const { id } = params;
     
-    const proveedor = await prisma.proveedor.findUnique({
+    const typesupplier = await prisma.tipoProveedor.findUnique({
       where: { id },
       include: {
         _count: {
-          select: { 
-            lotes: true,
-            gastos: true
-        },
+          select: {
+            proveedores: true
+          },
         },
       },
     });
     
-    if (!proveedor) {
+    if (!typesupplier) {
       return NextResponse.json(
-        { error: "Proveedor no encontrado" },
+        { error: "Tipo proveedor no encontrado" },
         { status: 404 }
       );
     }
     
-    return NextResponse.json(proveedor);
+    return NextResponse.json(typesupplier);
   } catch (error) {
-    console.error("Error al obtener proveedor:", error);
+    console.error("Error al obtener el tipo proveedor:", error);
     return NextResponse.json(
-      { error: "Error al obtener proveedor" },
+      { error: "Error al obtener el tipo proveedor" },
       { status: 500 }
     );
   }
 }
 
-// PUT: Actualizar un proveedor
+// PUT: Actualizar un tipo proveedor
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -50,38 +49,31 @@ export async function PUT(
     const body = await request.json();
     
     // Validar datos con el esquema Zod
-    const validatedData = updateProveedorSchema.parse({ id, ...body });
+    const validatedData = updateTipoProveedorSchema.parse({ id, ...body });
     
     // Verificar si existe el proveedor
-    const supplierExists = await prisma.proveedor.findUnique({
+    const typeSupplierExists = await prisma.tipoProveedor.findUnique({
       where: { id },
     });
     
-    if (!supplierExists) {
+    if (!typeSupplierExists) {
       return NextResponse.json(
-        { error: "Proveedor no encontrado" },
+        { error: "Tipo proveedor no encontrado" },
         { status: 404 }
       );
     }
     
-    // Actualizar proveedor
-    const updatedSupplier = await prisma.proveedor.update({
+    // Actualizar tipo proveedor
+    const updatedTypeSupplier = await prisma.tipoProveedor.update({
       where: { id },
       data: {
-        nombre: validatedData.nombre,
-        contacto: validatedData.contacto,
-        telefono: validatedData.telefono,
-        email: validatedData.email,
-        direccion: validatedData.direccion,
-        ciudad: validatedData.ciudad,
-        notas: validatedData.notas,
-        tipoId: validatedData.tipoId || null,
+        nombre: validatedData.nombre
       },
     });
     
-    return NextResponse.json(updatedSupplier);
+    return NextResponse.json(updatedTypeSupplier);
   } catch (error) {
-    console.error("Error al actualizar proveedor:", error);
+    console.error("Error al actualizar el tipo de proveedor:", error);
     
     if (error instanceof ZodError) {
       return NextResponse.json(
@@ -97,7 +89,7 @@ export async function PUT(
   }
 }
 
-// DELETE: Eliminar un proveedor
+// DELETE: Eliminar un tipo proveedor
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -106,46 +98,38 @@ export async function DELETE(
     const { id } = params;
     
     // Validar el ID con Zod
-    deleteProveedorSchema.parse({ id });
+    deleteTipoProveedorSchema.parse({ id });
     
     // Verificar si existe el proveedor
-    const proveedor = await prisma.proveedor.findUnique({
+    const typesupplier = await prisma.tipoProveedor.findUnique({
       where: { id },
       include: { 
-        lotes: true,
-        gastos: true 
+        proveedores: true,
       },
     });
     
-    if (!proveedor) {
+    if (!typesupplier) {
       return NextResponse.json(
-        { error: "Proveedor no encontrado" },
+        { error: "TIpo proveedor no encontrado" },
         { status: 404 }
       );
     }
     
     // Eliminar los lotes asociadas al proveedor si existen
-    if (proveedor.lotes.length > 0) {
-      await prisma.lote.deleteMany({
-        where: { proveedorId: id },
+    if (typesupplier.proveedores.length > 0) {
+      await prisma.proveedor.deleteMany({
+        where: { tipoId: id },
       });
     }
-
-    // Eliminar los gastos asociadas al proveedor si existen
-    if (proveedor.gastos.length > 0) {
-        await prisma.gasto.deleteMany({
-          where: { proveedorId: id },
-        });
-      }
     
     // Eliminar el proveedor
-    await prisma.proveedor.delete({
+    await prisma.tipoProveedor.delete({
       where: { id },
     });
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error al eliminar proveedor:", error);
+    console.error("Error al eliminar el tipo proveedor:", error);
     
     if (error instanceof ZodError) {
       return NextResponse.json(
@@ -155,7 +139,7 @@ export async function DELETE(
     }
     
     return NextResponse.json(
-      { error: "Error al eliminar el proveedor" },
+      { error: "Error al eliminar el tipo proveedor" },
       { status: 500 }
     );
   }

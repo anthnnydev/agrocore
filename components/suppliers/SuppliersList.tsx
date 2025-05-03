@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 
 type SupplierWithGastos = Prisma.ProveedorGetPayload<{
   include: {
+    tipo: true,
     _count: {
       select: {
         gastos: true;
@@ -50,7 +51,7 @@ export default function SupplierList({ suppliers }: Props) {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {supplier.tipo}
+                  {supplier.tipo ? supplier.tipo.nombre : "Sin asignar"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {supplier.ciudad || "No especificada"}

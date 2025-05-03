@@ -24,14 +24,22 @@ async function main() {
 
     // Insertar proveedores
     const proveedoresInsertados = await Promise.all(
-      proveedores.map((proveedor) => 
-        prisma.proveedor.create({
+      proveedores.map((proveedor) => {
+        const tipoRelacionado = tiposProveedorInsertados.find(t => t.nombre === proveedor.tipo);
+    
+        const { tipo, ...restoProveedor } = proveedor;
+    
+        if (!tipoRelacionado) {
+          throw new Error(`Tipo de proveedor no encontrado: ${proveedor.tipo}`);
+        }
+    
+        return prisma.proveedor.create({
           data: {
-            ...proveedor,
-            tipoId: tiposProveedorInsertados.find(tipo => tipo.nombre === proveedor.tipo)?.id // Relacionar con tipo
+            ...restoProveedor,
+            tipoId: tipoRelacionado.id
           }
-        })
-      )
+        });
+      })
     );
 
     // Insertar lotes (relacionar con proveedor)
